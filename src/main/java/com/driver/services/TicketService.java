@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -42,7 +43,40 @@ public class TicketService {
         //Also in the passenger Entity change the attribute bookedTickets by using the attribute bookingPersonId.
        //And the end return the ticketId that has come from db
 
-       return null;
+        Train train = trainRepository.findById(bookTicketEntryDto.getTrainId()).get();
+        String route = train.getRoute();
+        String [] routeArr = route.split(",");
+        boolean departureStationOnRoute = Arrays.stream(routeArr).anyMatch(thisRoute -> thisRoute.equals(bookTicketEntryDto.getFromStation().name()));
+        boolean arrivalStationOnRoute = Arrays.stream(routeArr).anyMatch(thisRoute -> thisRoute.equals(bookTicketEntryDto.getToStation().name()));
+        if(!departureStationOnRoute || !arrivalStationOnRoute){
+            throw new Exception("Invalid station");
+        }
+       int indexOfFromStation = Arrays.asList(routeArr).indexOf(bookTicketEntryDto.getFromStation().name());
+        int indexOfToStation = Arrays.asList(routeArr).indexOf(bookTicketEntryDto.getToStation().name());
+        int totalStationInBWGivenStations = indexOfToStation - indexOfFromStation;
 
+        List<Passenger> passengerList = new ArrayList<>();
+        for(int passengerId : bookTicketEntryDto.getPassengerIds()){
+            Passenger passenger = passengerRepository.findById(passengerId).get();
+            passengerList.add(passenger);
+        }
+
+        Ticket ticket = new Ticket();
+        ticket.setTotalFare(300*totalStationInBWGivenStations);
+        ticket.setPassengersList(passengerList);
+        ticket.setFromStation(bookTicketEntryDto.getFromStation());
+        ticket.setToStation(bookTicketEntryDto.getToStation());
+        ticket.setTrain(train);
+
+
+        Passenger passenger = passengerRepository.findById(bookTicketEntryDto.getBookingPersonId()).get();
+        passenger.getBookedTickets().add(ticket);
+        passengerRepository.save(passenger);
+
+        Ticket updatedTicket = ticketRepository.save(ticket);
+        train.getBookedTickets().add(updatedTicket);
+        trainRepository.save(train);
+
+        return updatedTicket.getTicketId();
     }
 }
