@@ -22,8 +22,8 @@ public class PassengerService {
 //        passenger1.setBookedTickets(new ArrayList<>());
 //        passengerRepository.save(passenger1);
 //        return passenger1.getPassengerId();
-        Passenger passenger1 = passengerRepository.save(passenger);
-        return passenger1.getPassengerId();
+        Passenger updatedPassenger = passengerRepository.save(passenger);
+        return updatedPassenger.getPassengerId();
     }
 
 }
