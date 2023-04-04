@@ -16,11 +16,13 @@ public class PassengerService {
 
     public Integer addPassenger(Passenger passenger){
         //Add the passenger Object in the passengerDb and return the passegnerId that has been returned
-        Passenger passenger1 = new Passenger();
-        passenger1.setName(passenger.getName());
-        passenger1.setAge(passenger.getAge());
-        passenger1.setBookedTickets(new ArrayList<>());
-        passengerRepository.save(passenger1);
+//        Passenger passenger1 = new Passenger();
+//        passenger1.setName(passenger.getName());
+//        passenger1.setAge(passenger.getAge());
+//        passenger1.setBookedTickets(new ArrayList<>());
+//        passengerRepository.save(passenger1);
+//        return passenger1.getPassengerId();
+        Passenger passenger1 = passengerRepository.save(passenger);
         return passenger1.getPassengerId();
     }
 
