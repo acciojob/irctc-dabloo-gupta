@@ -81,4 +81,6 @@ public class Train {
     public void setNoOfSeats(int noOfSeats) {
         this.noOfSeats = noOfSeats;
     }
+
+
 }
